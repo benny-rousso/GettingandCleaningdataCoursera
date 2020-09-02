@@ -1,0 +1,111 @@
+---
+title: "Code Book"
+author: "Benny Zuse Rousso"
+date: "2 September 2020"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Description
+
+This code book was developed by the student Benny Rousso as required activity to complete week's 4 assignment for the 'Getting and Cleaning Data' Course. It aims to support the `run_analysis.R` script by providing further details on the 5 steps performed during the pre-processing analysis.
+
+## Abstract
+
+This is the Code Book required for the submission of Week 4 assignment of the course 'Getting and Cleaning Data'. This code book aims to describe the pre-processing, datasets and variables within the run_analysis.R script. The data were downloaded UCI Machine Learning Repository and refers to Human activities recognition through smarthphones use. Training and test data sets were merged into one data set, followed by exctration of a limited number of variables of interests (i.e. mean and standard deviation variables). Data was then appropriately labelled for both activities and variables. Finally, a tidy data set containing the mean value of each variable grouped by subject and type of activity is provided.
+
+## Step 0: Download the data set
+
+Data was downloaded from the provided [link](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip) and extracted. Then, the location of the extracted files was set as the working directory using `setwd()`.
+
+## Step 1: Loading the data, metadata, pre-processing and merge
+
+Data were loaded using `read.table()`. The following datasets were created
+
+* `X.train` : `X_train.txt` (7352 obs. of 561 variables)
+*contains smartphone's measurements training data*
+
+* `Y.train` : `Y_train.txt` (7352 obs. of 1 variable)
+*contains activity identification concerning smartphone's measurements          training data*
+
+* `S.train` : `subject_train.txt` (7352 obs. of 1 variable)
+*contains subject identification concerning smartphone's measurements          training data*
+
+* `X.test` : `X_test.txt` (2947 obs. of 561 variables)
+*contains smartphone's measurements testing data*
+
+* `Y.test` : `Y_test.txt` (2947 obs. of 1 variable)
+*contains activity identification concerning smartphone's measurements          testing data*
+
+* `S.test` : `subject_test.txt` (2947 obs. of 1 variable)
+*contains subject identification concerning smartphone's measurements          testing data*
+
+Metadatada (i.e. features, activity and subject labels) were also loaded using `read.table()`
+
+*`features` : `features.txt` (561 obs of 2 variables)
+*contains variables description (i.e. variables names) for smartphone's measurements*
+
+*`activityLabels` : `activity_labels.txt` (6 obs. of 2 variables)
+*contains list of activities performed during the research*
+
+Data was merged first to creat a training and a testing set individually using cbind()
+
+*`Train.set` : `X.train` + `Y.train` + `S.train datasets`, with column names given by `features`. (7352 obs of 563 variables)
+*contains all data concerning the training data of the research*
+
+*`Test.set` :`X.test` + `Y.test` + `s.test` datasets, with column names given by `features`
+*contains all data concerning the testing data of the research*
+
+Finally, training and testing data sets were merged using `rbind()` function
+
+*`Complete.set` : `Train.set` + `Test.set` (10299 obs. of 563 variables)
+*contains all data of the research*
+
+## Step 2: Extract only measurements on the mean and standard deviation for each measurement
+
+The extraction of mean and stardard deviation variables from the Complete.set was done through pattern identification of characters. The function `grepl()` was used. For that, the column names were first extracted from the `Complete.set` and stored into the variable `var.complete.set`.
+
+*`var.complete set` : character vector (1:563)
+
+Then, a logical vector containing TRUE to when the words "mean" of "std" were present was obtained
+
+*`logical` : logical vector (1:563)
+
+Metadata (subject and activity id) were extracted through subsetting from `Complete.set` to be inserted later on. They were stored into `id.var`
+
+*`id.var` : (10299 obs. of 2 variables)
+
+`Complete.set` was filtered using the logical vector in order to have a dataset only with mean and standard deviation variables. This was done using subsetting
+
+*`Complete.set` : filtered using logical vector (10299 obs. of 86 variables)
+
+Finally, the metadata was added again into the filtered `complete.set` using `cbind()`
+
+*`Complete.set` (10299 obs of 88 variables)
+
+## Step 3: Use descriptive activity names to name the activities in the data set
+The descriptive activity names are then added to `Complete.set` by merging `Complete.set` and `activityLabels` by the common variable `activityId`. They are included in the `Complete.set` into a new variable named `activityType`.
+
+*`Complete.set` (10299 of 89 variables)
+
+## Step 4: Use descriptive activity names to name the activities in the data set
+The variables names of `Complete.set` are improved by replacing character patterns using the function `gsub()`. Specifically,
+
+* All `Acc` in variable's names were replaced by `Accelerometer`
+* All `Gyro` in variable's names were replaced by `Gyroscope`
+* All `BodyBody` in variable's names were replaced by `Body`
+* All `Mag` in variable's names were replaced by `Magnitude`
+* All variable's names starting with `t` were replaced by `Time`
+* All variable's names starting with `f` were replaced by `Frequency`
+* All `tBody` in variable's names were replaced by `Timebody`
+* All `Mag` in variable's names were replaced by `Magnitude`
+* All `angle` in variable's names were replaced by `Angle`
+* All `gravity` in variable's names were replaced by `Gravity`
+
+## Step 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject
+Lastly, the Complete.set data set is summarized in a new data set named `Mean.set`. The mean value of each measurement was calculated by activity type and subject using the `aggreagate()` function
+
+*`Mean.set` : aggregate the mean value of each variable of `Complete.set` by `activityType` and `subjectId` (180 obs. of 89 variables).

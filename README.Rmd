@@ -1,0 +1,33 @@
+---
+title: "README"
+author: "Benny Zuse Rousso"
+date: "2 September 2020"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Description
+
+This repository refers to the submission of Week's 4 assignment for the 'Getting and Cleaning Data' course. This file contains the description of the files that encompasses the analyses and what they do.
+
+## Dataset
+Data was downloaded from the provided [UCI Machine Learning Repository - Human Activity Recognintion using smartphones ](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip)
+
+## Files
+
+* `Code Book.md`: a code book that provides details on the data, data, transformation and variables created during the analysis performed by `run_analysis.R` script
+
+* `run_analysis.R`: the script that contains the instructions to load and pre-process the data into a tidy data set as required in this assignment. Specifically, 5 steps were done:
+
+  * Merge the training and the test sets to create one data set.
+  
+  * Extract only the measurements on the mean and standard deviation for each measurement.
+  
+  * Use descriptive activity names to name the activities in the data set
+  
+  * Appropriately label the data set with descriptive variable names.
+  
+  * Creates a second independent tidy data set with the average of each variable for each activity and each subject.
